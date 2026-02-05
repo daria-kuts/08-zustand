@@ -2,6 +2,34 @@ import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
 import { getQueryClient } from "../../../components/TanStackProvider/getQueryClient";
 import NoteDetailsClient from "./NoteDetails.client";
+import type { Metadata } from "next";
+
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export async function generateMetadata(
+  { params }: PageProps
+): Promise<Metadata> {
+  const note = await fetchNoteById(params.id);
+
+  return {
+    title: note.title,
+    description: note.content.slice(0, 120),
+    openGraph: {
+      title: note.title,
+      description: note.content.slice(0, 120),
+      url: `https://notehub.app/notes/${params.id}`,
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+        },
+      ],
+    },
+  };
+}
 
 interface Props {
   params: Promise<{
