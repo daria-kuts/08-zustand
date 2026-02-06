@@ -5,15 +5,15 @@ import NoteDetailsClient from "./NoteDetails.client";
 import type { Metadata } from "next";
 
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
-
 export async function generateMetadata(
   { params }: PageProps
 ): Promise<Metadata> {
-  const note = await fetchNoteById(params.id);
+
+  const { id } = await params;
+
+  const note = await fetchNoteById(id);
 
   return {
     title: note.title,
@@ -21,7 +21,7 @@ export async function generateMetadata(
     openGraph: {
       title: note.title,
       description: note.content.slice(0, 120),
-      url: `https://notehub.app/notes/${params.id}`,
+      url: `https://notehub.app/notes/${id}`,
       images: [
         {
           url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
